@@ -1772,6 +1772,7 @@ inline EGpuVendorId RHIConvertToGpuVendorId(uint32 VendorId)
 	case EGpuVendorId::Arm:
 	case EGpuVendorId::Qualcomm:
 	case EGpuVendorId::Intel:
+	case EGpuVendorId::Broadcom:
 		return (EGpuVendorId)VendorId;
 
 	default:
