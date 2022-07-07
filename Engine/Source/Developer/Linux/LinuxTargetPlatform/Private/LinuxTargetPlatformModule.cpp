@@ -62,6 +62,21 @@ public:
 		// We need to manually load the config properties here, as this module is loaded before the UObject system is setup to do this
 		GConfig->GetArray(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("TargetedRHIs"), TargetSettings->TargetedRHIs, GEngineIni);
 		TargetSettings->AddToRoot();
+		
+        if (!GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookDXTTextures"), TargetSettings->bCookDXTTextures, GEngineIni))
+        {
+                TargetSettings->bCookDXTTextures = true;
+        }
+
+        if (!GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookBCTextures"), TargetSettings->bCookBCTextures, GEngineIni))
+        {
+                TargetSettings->bCookBCTextures = true;
+        }
+
+		if (!GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookETC2Textures"), TargetSettings->bCookETC2Textures, GEngineIni))
+        {
+                TargetSettings->bCookETC2Textures = true;
+        }
 
 		ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings");
 
