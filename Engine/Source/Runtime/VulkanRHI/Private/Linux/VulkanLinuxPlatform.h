@@ -37,6 +37,10 @@ class FVulkanLinuxPlatform : public FVulkanGenericPlatform
 {
 public:
 	static bool IsSupported();
+	
+	static void CheckDeviceDriver(uint32 DeviceIndex, EGpuVendorId VendorId, const VkPhysicalDeviceProperties& Props);
+	static bool SupportsBCTextureFormats() { return bHasBCTextures; }
+	static bool SupportsASTCTextureFormats() { return bHasASTCTextures; }
 
 	static bool LoadVulkanLibrary();
 	static bool LoadVulkanInstanceFunctions(VkInstance inInstance);
@@ -76,6 +80,8 @@ public:
 protected:
 	static void* VulkanLib;
 	static bool bAttemptedLoad;
+	static bool bHasBCTextures;
+	static bool bHasASTCTextures;
 };
 
 typedef FVulkanLinuxPlatform FVulkanPlatform;
