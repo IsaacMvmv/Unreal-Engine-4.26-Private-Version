@@ -18,6 +18,10 @@ static bool GForceEnableDebugMarkers = false;
 
 void* FVulkanLinuxPlatform::VulkanLib = nullptr;
 bool FVulkanLinuxPlatform::bAttemptedLoad = false;
+bool FVulkanLinuxPlatform::bHasBCTextures = true;
+bool FVulkanLinuxPlatform::bHasASTCTextures = false;
+
+
 
 bool FVulkanLinuxPlatform::IsSupported()
 {
@@ -251,4 +255,14 @@ void FVulkanLinuxPlatform::WriteCrashMarker(const FOptionalVulkanDeviceExtension
 			VulkanDynamicAPI::vkCmdSetCheckpointNV(CmdBuffer, (void*)(size_t)Value);
 		}
 	}
+}
+
+void FVulkanLinuxPlatform::CheckDeviceDriver(uint32 DeviceIndex, EGpuVendorId VendorId, const VkPhysicalDeviceProperties& Props)
+{
+       // RPI4B does not support BC Textures
+       if (VendorId == EGpuVendorId::Broadcom)
+       {
+               bHasBCTextures = false;
+               bHasASTCTextures = true;
+       }
 }
