@@ -45,4 +45,13 @@ public:
 	 */
 	UPROPERTY(EditAnywhere, config, Category=Rendering)
 	TArray<FString> TargetedRHIs;
+	
+	UPROPERTY(EditAnywhere, config, Category=Textures, meta = (DisplayName = "Cook DXT Textures"))
+	bool bCookDXTTextures;
+
+	UPROPERTY(EditAnywhere, config, Category = Textures, meta = (DisplayName = "Cook BC Textures"))
+	bool bCookBCTextures;
+
+	UPROPERTY(EditAnywhere, config, Category = Textures, meta = (DisplayName = "Cook ETC2 Textures"))
+	bool bCookETC2Textures;
 };
