@@ -28,6 +28,13 @@
 
 class UTextureLODSettings;
 
+namespace LinuxTextureFormats
+{
+       static FName NameETC2RGB(TEXT("ETC2_RGB"));
+       static FName NameETC2RGBA(TEXT("ETC2_RGBA"));
+       static FName NameBGRA8(TEXT("BGRA8"));
+}
+
 /**
  * Template for Linux target platforms
  */
@@ -296,6 +303,55 @@ public:
 		{
 			// just use the standard texture format name for this texture
 			GetDefaultTextureFormatNamePerLayer(OutFormats.AddDefaulted_GetRef(), this, InTexture, EngineSettings, true);
+            bool bCookDXTTextures = true;
+            GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookDXTTextures"), bCookDXTTextures, GEngineIni);
+            bool bCookBCTextures = true;
+            GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookBCTextures"), bCookBCTextures, GEngineIni);
+            bool bCookETC2Textures = false;
+            GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookETC2Textures"), bCookETC2Textures, GEngineIni);
+
+            for (TArray<FName>& LayerNames : OutFormats)
+            {
+                    for (int32 NameIndex = LayerNames.Num() - 1; NameIndex >= 0; NameIndex--)
+                    {
+                            const FString Name = LayerNames[NameIndex].ToString();
+                            if (Name.Contains("DXT"))
+                            {
+                                    if (!bCookDXTTextures)
+                                    {
+                                            if (bCookETC2Textures)
+                                            {
+                                                    if (Name == "DXT1")
+                                                    {
+                                                            LayerNames[NameIndex] = LinuxTextureFormats::NameETC2RGB;
+                                                    }
+                                                     else
+                                                     {
+                                                             LayerNames[NameIndex] = LinuxTextureFormats::NameETC2RGBA;
+                                                     }
+                                             }
+                                             else
+                                             {
+                                                      LayerNames[NameIndex] = LinuxTextureFormats::NameBGRA8;
+                                             }
+                                    }
+                            }
+                            else if (Name.StartsWith("BC"))
+                            {
+                                    if (!bCookBCTextures)
+                                    {
+                                            if (bCookETC2Textures)
+                                            {
+                                                    LayerNames[NameIndex] = LinuxTextureFormats::NameETC2RGB;
+                                            }
+                                            else
+                                            {
+                                                    LayerNames[NameIndex] = LinuxTextureFormats::NameBGRA8;
+                                            }
+                                    }
+                             }
+                    }
+            }
 		}
 	}
 
@@ -306,6 +362,54 @@ public:
 		{
 			// just use the standard texture format name for this texture
 			GetAllDefaultTextureFormats(this, OutFormats, true);
+			bool bCookDXTTextures = true;
+			GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookDXTTextures"), bCookDXTTextures, GEngineIni);
+			bool bCookBCTextures = true;
+			GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookBCTextures"), bCookBCTextures, GEngineIni);
+			bool bCookETC2Textures = false;
+			GConfig->GetBool(TEXT("/Script/LinuxTargetPlatform.LinuxTargetSettings"), TEXT("bCookETC2Textures"), bCookETC2Textures, GEngineIni);
+
+			for (int32 NameIndex = OutFormats.Num() - 1; NameIndex >= 0; NameIndex--)
+			{
+					const FString Name = OutFormats[NameIndex].ToString();
+                    if (Name.Contains("DXT"))
+                    {
+                               if (!bCookDXTTextures)
+                               {
+                                        if (bCookETC2Textures)
+                                        {
+                                                if (Name == "DXT1")
+                                                {
+                                                        OutFormats[NameIndex] = LinuxTextureFormats::NameETC2RGB;
+                                                }
+                                                else
+                                                {
+                                                        OutFormats[NameIndex] = LinuxTextureFormats::NameETC2RGBA;
+                                                }
+                                        }
+                                        else
+                                        {
+                                                OutFormats.RemoveAt(NameIndex);
+                                        }
+
+                                }
+
+                    }
+                    else if (Name.StartsWith("BC"))
+                    {
+                             if (!bCookBCTextures)
+                             {
+                                     if (bCookETC2Textures)
+                                     {
+                                            OutFormats[NameIndex] = LinuxTextureFormats::NameETC2RGB;
+                                     }
+                                     else
+                                     {
+                                             OutFormats.RemoveAt(NameIndex);
+                                     }
+                              }
+                    }
+            }
 		}
 	}
 
