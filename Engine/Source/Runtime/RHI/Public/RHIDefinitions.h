@@ -1180,6 +1180,7 @@ enum class EGpuVendorId
 	Arm			= 0x13B5, 
 	Qualcomm	= 0x5143,
 	Intel		= 0x8086,
+	Broadcom    = 0x14e4,
 };
 
 /** An enumeration of the different RHI reference types. */
